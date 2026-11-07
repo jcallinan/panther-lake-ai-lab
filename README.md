@@ -33,3 +33,9 @@ Record Windows build, firmware, CPU/GPU/NPU drivers, runtime version, plugged-in
 Review hardware inventories before publishing; generated results are excluded by default.
 
 See [compatibility matrix](docs/compatibility-matrix.md). Contributions welcome. MIT licensed.
+
+## Project management
+
+- [Full project plan](docs/PROJECT_PLAN.md)
+- [Kanban planning board](docs/PROJECT_BOARD.md)
+- [GitHub Issues](https://github.com/jcallinan/panther-lake-ai-lab/issues)
