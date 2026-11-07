@@ -1,0 +1,35 @@
+# Panther Lake AI Lab
+
+Reproducible CPU, GPU, and NPU experiments for Intel Core Ultra Series 3 (Panther Lake), initially on a Lenovo IdeaPad 5 2-in-1 15IPH11 with Core Ultra 5 322.
+
+## Goals
+
+- Identify CPU, Xe3 integrated GPU, and NPU hardware and drivers.
+- Test OpenVINO, ONNX Runtime, Windows ML, Ollama, llama.cpp and Intel AI Playground.
+- Verify *actual execution devices* instead of assuming acceleration.
+- Compare latency, throughput, RAM, temperature, power and battery usage.
+- Publish reproducible results across driver, BIOS and RAM configurations.
+
+## Quick start (Windows PowerShell)
+
+Clone this repository and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\hardware\inventory.ps1
+py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts\detect_devices.py
+.\.venv\Scripts\python.exe scripts\benchmark_openvino.py --device CPU
+```
+
+Only try `--device GPU` or `--device NPU` after device discovery confirms them. A device being detected does not establish that a model can compile or execute on it.
+
+## Methodology
+
+Record Windows build, firmware, CPU/GPU/NPU drivers, runtime version, plugged-in status, power mode, RAM configuration, model and precision. Warm up before timed runs and use identical inputs. The included matrix multiplication test is a basic inference smoke test, **not** an LLM benchmark.
+
+## Privacy
+
+Review hardware inventories before publishing; generated results are excluded by default.
+
+See [compatibility matrix](docs/compatibility-matrix.md). Contributions welcome. MIT licensed.
