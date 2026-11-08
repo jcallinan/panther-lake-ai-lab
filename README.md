@@ -39,3 +39,10 @@ See [compatibility matrix](docs/compatibility-matrix.md). Contributions welcome.
 - [Full project plan](docs/PROJECT_PLAN.md)
 - [Kanban planning board](docs/PROJECT_BOARD.md)
 - [GitHub Issues](https://github.com/jcallinan/panther-lake-ai-lab/issues)
+
+## Academic research and conference preparation
+
+- [Master's-level paper draft](docs/PAPER_DRAFT.md)
+- [Conference readiness roadmap](docs/CONFERENCE_ROADMAP.md)
+
+These are research-stage documents; no experimental findings or conference acceptance are claimed.
