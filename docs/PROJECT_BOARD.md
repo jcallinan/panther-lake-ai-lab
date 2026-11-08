@@ -2,6 +2,13 @@
 
 This Markdown board is version-controlled. [GitHub Issues](https://github.com/jcallinan/panther-lake-ai-lab/issues) hold the actionable tasks; this file is the planning snapshot. Update this board when work changes status.
 
+## Research publication backlog
+
+- [#13 Literature review and novelty analysis](https://github.com/jcallinan/panther-lake-ai-lab/issues/13)
+- [#14 Preregister benchmark protocol and statistics](https://github.com/jcallinan/panther-lake-ai-lab/issues/14)
+- [#15 Validate measurement and reproducibility](https://github.com/jcallinan/panther-lake-ai-lab/issues/15)
+- [#16 Conference submission and artifact package](https://github.com/jcallinan/panther-lake-ai-lab/issues/16)
+
 ## Backlog
 
 | Issue | Workstream | Phase |
@@ -18,6 +25,8 @@ This Markdown board is version-controlled. [GitHub Issues](https://github.com/jc
 | [#12](../issues/12) | Results dashboard | 5 |
 
 ## Ready
+
+**Tonight's test guide:** [First test session](FIRST_TEST_SESSION.md). These tasks remain untested until the laptop produces evidence.
 
 - [#2 Hardware inventory and driver baseline](../issues/2)
 - [#3 OpenVINO CPU/GPU/NPU execution validation](../issues/3)
