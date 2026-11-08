@@ -50,3 +50,19 @@ These are research-stage documents; no experimental findings or conference accep
 ## First test session
 
 Before changing drivers or hardware, follow the [first laptop test protocol](docs/FIRST_TEST_SESSION.md) and preserve a sanitized baseline. The [Kanban board](docs/PROJECT_BOARD.md) now tracks all 16 issues, including academic publication work.
+
+## NPU experiment suite
+
+- [Ten proposed NPU projects and research methodology](docs/NPU_EXPERIMENT_SUITE.md)
+- [NPU matrix compatibility and latency sweep](scripts/npu_matrix_sweep.py)
+- [Synthetic anomaly scoring demonstration](scripts/npu_anomaly_demo.py)
+- [NPU research issues #17–21](https://github.com/jcallinan/panther-lake-ai-lab/issues)
+
+After installing dependencies, run:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\npu_matrix_sweep.py --devices CPU GPU NPU
+.\.venv\Scripts\python.exe scripts\npu_anomaly_demo.py --devices CPU GPU NPU
+```
+
+These are preliminary compatibility and latency tests. No device execution or NPU acceleration has been verified on the physical laptop yet.
