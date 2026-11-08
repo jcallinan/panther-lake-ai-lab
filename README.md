@@ -46,3 +46,7 @@ See [compatibility matrix](docs/compatibility-matrix.md). Contributions welcome.
 - [Conference readiness roadmap](docs/CONFERENCE_ROADMAP.md)
 
 These are research-stage documents; no experimental findings or conference acceptance are claimed.
+
+## First test session
+
+Before changing drivers or hardware, follow the [first laptop test protocol](docs/FIRST_TEST_SESSION.md) and preserve a sanitized baseline. The [Kanban board](docs/PROJECT_BOARD.md) now tracks all 16 issues, including academic publication work.
