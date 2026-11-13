@@ -22,7 +22,9 @@ MODEL_INFO = {
 # Static shapes the NPU pipeline is compiled for. Prompt (incl. chat history) must fit MAX_PROMPT_LEN.
 NPU_MAX_PROMPT_LEN = 1024
 NPU_MIN_RESPONSE_LEN = 256
-CACHE_DIRS = {"NPU": MODELS_DIR / "npucache", "GPU": MODELS_DIR / "gpucache"}
+# LLM-specific subfolders: other examples (e.g. depth_parallax) also cache into models/npucache, and a shared
+# folder made "blobs already present" a wrong signal for a warm cache (and made --cold delete their blobs).
+CACHE_DIRS = {"NPU": MODELS_DIR / "npucache" / "llm", "GPU": MODELS_DIR / "gpucache" / "llm"}
 
 
 def log(msg: str):
@@ -102,7 +104,8 @@ def load(model_dir: Path, device: str) -> tuple:
     if device not in CACHE_DIRS:
         state = "no-cache"
     else:
-        state = "cached" if before else "cold"  # blobs present before load => served from cache
+        # New blobs are only written by a real compile; none written => the load was served from cache.
+        state = "cold" if cache_blobs(device) - before else "cached"
     return pipe, {"device": device, "load_s": round(load_s, 2), "cache": state,
                   "cache_dir": str(CACHE_DIRS[device]) if device in CACHE_DIRS else None,
                   "config": {k: v for k, v in pipeline_config(device).items() if k != "CACHE_DIR"}}

@@ -8,3 +8,8 @@ models/
 assets/clips/
 media/mp4/
 .vscode/
+# GitHub Pages build output (site/build.py)
+site/_build/
+
+# Slide decks are built by docs/presentation/build_*_deck.py and attached to GitHub Releases (too large for git)
+docs/presentation/*.pptx

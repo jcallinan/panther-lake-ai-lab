@@ -1,0 +1,928 @@
+{
+ "extracted": "2026-11-12",
+ "perf_atlas": {
+  "date": "2026-11-12",
+  "configs": 162,
+  "grid": {
+   "models": [
+    "MLP-S",
+    "MLP-M",
+    "MLP-L",
+    "CONV-XS",
+    "CONV-S",
+    "CONV-M"
+   ],
+   "batches": [
+    1,
+    8,
+    32
+   ],
+   "precisions": [
+    "FP32",
+    "FP16",
+    "INT8"
+   ]
+  },
+  "sweep_s": 177.0,
+  "status": {
+   "CPU": {
+    "executed": 54
+   },
+   "GPU": {
+    "executed": 54
+   },
+   "NPU": {
+    "executed": 45,
+    "failed_correctness": 9
+   }
+  },
+  "wins": {
+   "CPU": {
+    "npu_wins": 35,
+    "comparable": 45
+   },
+   "GPU": {
+    "npu_wins": 16,
+    "comparable": 45
+   }
+  },
+  "picks": {
+   "MLP-S b1 FP16": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 0.558,
+     "p95_ms": 0.66,
+     "gflops": 30.1
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 0.346,
+     "p95_ms": 0.415,
+     "gflops": 48.4
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 0.395,
+     "p95_ms": 0.603,
+     "gflops": 42.5
+    }
+   },
+   "MLP-S b1 INT8": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 0.27,
+     "p95_ms": 0.299,
+     "gflops": 62.1
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 0.244,
+     "p95_ms": 0.389,
+     "gflops": 68.9
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 0.394,
+     "p95_ms": 0.632,
+     "gflops": 42.6
+    }
+   },
+   "MLP-L b1 FP16": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 3.456,
+     "p95_ms": 4.271,
+     "gflops": 58.2
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 3.481,
+     "p95_ms": 3.86,
+     "gflops": 57.8
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 5.043,
+     "p95_ms": 5.422,
+     "gflops": 39.9
+    }
+   },
+   "MLP-L b1 INT8": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 1.911,
+     "p95_ms": 2.108,
+     "gflops": 105.3
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 1.859,
+     "p95_ms": 2.055,
+     "gflops": 108.3
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 5.047,
+     "p95_ms": 5.312,
+     "gflops": 39.9
+    }
+   },
+   "MLP-L b8 FP16": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 24.188,
+     "p95_ms": 24.723,
+     "gflops": 66.6
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 3.502,
+     "p95_ms": 3.889,
+     "gflops": 459.9
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 6.423,
+     "p95_ms": 7.477,
+     "gflops": 250.7
+    }
+   },
+   "MLP-L b8 INT8": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 12.056,
+     "p95_ms": 12.846,
+     "gflops": 133.6
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 1.868,
+     "p95_ms": 2.068,
+     "gflops": 862.3
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 6.499,
+     "p95_ms": 7.602,
+     "gflops": 247.8
+    }
+   },
+   "MLP-L b32 FP16": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 3.877,
+     "p95_ms": 4.677,
+     "gflops": 1661.6
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 3.766,
+     "p95_ms": 4.286,
+     "gflops": 1710.6
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 15.787,
+     "p95_ms": 16.46,
+     "gflops": 408.1
+    }
+   },
+   "MLP-L b32 INT8": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 2.267,
+     "p95_ms": 2.451,
+     "gflops": 2841.6
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 2.104,
+     "p95_ms": 2.314,
+     "gflops": 3062.3
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 15.802,
+     "p95_ms": 17.058,
+     "gflops": 407.7
+    }
+   },
+   "CONV-XS b1 FP16": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 0.131,
+     "p95_ms": 0.156,
+     "gflops": 447.1
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 0.065,
+     "p95_ms": 0.077,
+     "gflops": 894.2
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 0.239,
+     "p95_ms": 0.279,
+     "gflops": 244.1
+    }
+   },
+   "CONV-XS b1 INT8": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 0.13,
+     "p95_ms": 0.141,
+     "gflops": 448.5
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 0.066,
+     "p95_ms": 0.073,
+     "gflops": 888.7
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 0.241,
+     "p95_ms": 0.324,
+     "gflops": 241.9
+    }
+   },
+   "CONV-M b1 FP16": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 0.457,
+     "p95_ms": 0.553,
+     "gflops": 3995.0
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 0.34,
+     "p95_ms": 0.355,
+     "gflops": 5372.5
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 4.186,
+     "p95_ms": 4.606,
+     "gflops": 436.2
+    }
+   },
+   "CONV-M b1 INT8": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 0.445,
+     "p95_ms": 0.553,
+     "gflops": 4104.5
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 0.339,
+     "p95_ms": 0.367,
+     "gflops": 5394.7
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 4.338,
+     "p95_ms": 4.688,
+     "gflops": 421.0
+    }
+   },
+   "CONV-M b32 FP16": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 5.246,
+     "p95_ms": 7.535,
+     "gflops": 11139.0
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 7.957,
+     "p95_ms": 8.215,
+     "gflops": 7343.7
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 139.771,
+     "p95_ms": 141.751,
+     "gflops": 418.1
+    }
+   },
+   "CONV-M b32 INT8": {
+    "NPU": {
+     "status": "executed",
+     "median_ms": 5.309,
+     "p95_ms": 7.351,
+     "gflops": 11007.0
+    },
+    "GPU": {
+     "status": "executed",
+     "median_ms": 8.013,
+     "p95_ms": 8.135,
+     "gflops": 7292.8
+    },
+    "CPU": {
+     "status": "executed",
+     "median_ms": 140.369,
+     "p95_ms": 141.911,
+     "gflops": 416.3
+    }
+   }
+  },
+  "wrong_output": [
+   {
+    "model": "CONV-XS",
+    "batch": 8,
+    "precision": "FP32",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-XS",
+    "batch": 8,
+    "precision": "FP16",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-XS",
+    "batch": 8,
+    "precision": "INT8",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-S",
+    "batch": 8,
+    "precision": "FP32",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-S",
+    "batch": 8,
+    "precision": "FP16",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-S",
+    "batch": 8,
+    "precision": "INT8",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-M",
+    "batch": 8,
+    "precision": "FP32",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-M",
+    "batch": 8,
+    "precision": "FP16",
+    "replicates_sample0": true
+   },
+   {
+    "model": "CONV-M",
+    "batch": 8,
+    "precision": "INT8",
+    "replicates_sample0": true
+   }
+  ],
+  "compile": {
+   "NPU": {
+    "median_s": 0.42,
+    "max_s": 4.7
+   },
+   "GPU": {
+    "median_s": 0.05,
+    "max_s": 0.2
+   },
+   "CPU": {
+    "median_s": 0.03,
+    "max_s": 0.1
+   }
+  },
+  "peak_gflops": {
+   "NPU": 11139.0,
+   "GPU": 7344.0,
+   "CPU": 505.0
+  },
+  "async": {
+   "MLP-L b1 FP16": {
+    "CPU": 295.1,
+    "GPU": 295.7,
+    "NPU": 381.2
+   },
+   "MLP-L b32 FP16": {
+    "CPU": 2046.5,
+    "GPU": 8656.1,
+    "NPU": 11907.6
+   },
+   "MLP-L b1 INT8": {
+    "CPU": 292.2,
+    "GPU": 574.4,
+    "NPU": 761.1
+   },
+   "CONV-M b1 FP16": {
+    "CPU": 254.8,
+    "GPU": 2892.4,
+    "NPU": 9372.2
+   },
+   "CONV-M b32 FP16": {
+    "CPU": 226.8,
+    "GPU": 4111.7,
+    "NPU": 10665.9
+   }
+  }
+ },
+ "vision": {
+  "date": "2026-11-12",
+  "mode": "sequential",
+  "frames": 324,
+  "pipeline_fps": 21.6,
+  "devices": {
+   "NPU": {
+    "status": "ok",
+    "execution_devices": {
+     "detect": [
+      "NPU"
+     ],
+     "segment": [
+      "NPU"
+     ]
+    },
+    "detect": {
+     "median_ms": 2.292,
+     "p95_ms": 2.47,
+     "min_ms": 2.111,
+     "max_ms": 3.03,
+     "runs": 324
+    },
+    "segment": {
+     "median_ms": 0.84,
+     "p95_ms": 0.936,
+     "min_ms": 0.62,
+     "max_ms": 1.087,
+     "runs": 324
+    },
+    "frame": {
+     "median_ms": 3.134,
+     "p95_ms": 3.384,
+     "min_ms": 2.786,
+     "max_ms": 4.089,
+     "runs": 324
+    },
+    "compile_s": {
+     "detect": 1.66,
+     "segment": 0.67
+    }
+   },
+   "GPU": {
+    "status": "ok",
+    "execution_devices": {
+     "detect": [
+      "GPU.0"
+     ],
+     "segment": [
+      "GPU.0"
+     ]
+    },
+    "detect": {
+     "median_ms": 4.232,
+     "p95_ms": 4.348,
+     "min_ms": 4.081,
+     "max_ms": 4.481,
+     "runs": 324
+    },
+    "segment": {
+     "median_ms": 1.084,
+     "p95_ms": 1.214,
+     "min_ms": 1.02,
+     "max_ms": 1.738,
+     "runs": 324
+    },
+    "frame": {
+     "median_ms": 5.328,
+     "p95_ms": 5.519,
+     "min_ms": 5.107,
+     "max_ms": 5.894,
+     "runs": 324
+    },
+    "compile_s": {
+     "detect": 5.11,
+     "segment": 0.98
+    }
+   },
+   "CPU": {
+    "status": "ok",
+    "execution_devices": {
+     "detect": [
+      "CPU"
+     ],
+     "segment": [
+      "CPU"
+     ]
+    },
+    "detect": {
+     "median_ms": 11.884,
+     "p95_ms": 13.101,
+     "min_ms": 11.224,
+     "max_ms": 16.034,
+     "runs": 324
+    },
+    "segment": {
+     "median_ms": 2.624,
+     "p95_ms": 2.946,
+     "min_ms": 2.326,
+     "max_ms": 3.47,
+     "runs": 324
+    },
+    "frame": {
+     "median_ms": 14.482,
+     "p95_ms": 15.976,
+     "min_ms": 13.681,
+     "max_ms": 18.944,
+     "runs": 324
+    },
+    "compile_s": {
+     "detect": 0.45,
+     "segment": 0.13
+    }
+   }
+  }
+ },
+ "depth": {
+  "date": "2026-11-12",
+  "input": [
+   1,
+   3,
+   364,
+   364
+  ],
+  "devices": {
+   "NPU": {
+    "status": "compiled",
+    "execution_devices": [
+     "NPU"
+    ],
+    "compile_s": 1.75,
+    "cache": "warm (loaded from cache)",
+    "bench": {
+     "median_ms": 12.52,
+     "p95_ms": 20.14,
+     "min_ms": 12.138,
+     "max_ms": 22.61,
+     "runs": 40
+    }
+   },
+   "GPU": {
+    "status": "compiled",
+    "execution_devices": [
+     "GPU.0"
+    ],
+    "compile_s": 2.48,
+    "cache": "warm (loaded from cache)",
+    "bench": {
+     "median_ms": 17.28,
+     "p95_ms": 17.426,
+     "min_ms": 17.024,
+     "max_ms": 17.654,
+     "runs": 40
+    }
+   },
+   "CPU": {
+    "status": "compiled",
+    "execution_devices": [
+     "CPU"
+    ],
+    "compile_s": 4.61,
+    "cache": null,
+    "bench": {
+     "median_ms": 133.903,
+     "p95_ms": 138.727,
+     "min_ms": 132.492,
+     "max_ms": 139.875,
+     "runs": 12
+    }
+   }
+  },
+  "live": {
+   "device": "NPU",
+   "fps": 32.7,
+   "frames": 359,
+   "model": {
+    "median_ms": 13.917,
+    "p95_ms": 15.24,
+    "min_ms": 13.45,
+    "max_ms": 25.047,
+    "runs": 359
+   },
+   "host": {
+    "median_ms": 28.131,
+    "p95_ms": 31.012,
+    "min_ms": 25.349,
+    "max_ms": 60.696,
+    "runs": 359
+   },
+   "render": {
+    "median_ms": 14.709,
+    "p95_ms": 16.909,
+    "min_ms": 12.603,
+    "max_ms": 22.715,
+    "runs": 359
+   }
+  }
+ },
+ "offload": {
+  "date": "2026-11-12",
+  "phase_s": 15.0,
+  "fg_workers": 6,
+  "target_fps": 30.0,
+  "drift_pct": -6.5,
+  "execution_devices": {
+   "CPU": [
+    "CPU"
+   ],
+   "GPU": [
+    "GPU.0"
+   ],
+   "NPU": [
+    "NPU"
+   ]
+  },
+  "phases": [
+   {
+    "label": "AI off",
+    "device": null,
+    "status": null,
+    "ai_fps": null,
+    "fg_pct": 105.7,
+    "ai_proc_cpu_pct": 0.03,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": null,
+    "infer_ms": null,
+    "prepost_ms": null,
+    "ui_lag_p95_ms": 3.17,
+    "other_procs_cpu_pct": 6.93,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI on CPU",
+    "device": "CPU",
+    "status": "ok",
+    "ai_fps": 15.16,
+    "fg_pct": 85.3,
+    "ai_proc_cpu_pct": 12.72,
+    "cpu_pct": 99.98,
+    "ai_proc_cpu_ms_per_frame": 50.37,
+    "infer_ms": 61.48,
+    "prepost_ms": 4.31,
+    "ui_lag_p95_ms": 6.33,
+    "other_procs_cpu_pct": 5.11,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI off",
+    "device": null,
+    "status": null,
+    "ai_fps": null,
+    "fg_pct": 90.3,
+    "ai_proc_cpu_pct": 0.03,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": null,
+    "infer_ms": null,
+    "prepost_ms": null,
+    "ui_lag_p95_ms": 4.29,
+    "other_procs_cpu_pct": 8.84,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI on GPU",
+    "device": "GPU",
+    "status": "ok",
+    "ai_fps": 29.01,
+    "fg_pct": 96.3,
+    "ai_proc_cpu_pct": 3.55,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": 7.34,
+    "infer_ms": 23.41,
+    "prepost_ms": 3.74,
+    "ui_lag_p95_ms": 4.4,
+    "other_procs_cpu_pct": 1.9,
+    "npu_util": 0.0,
+    "gpu_util": 72.95
+   },
+   {
+    "label": "AI off",
+    "device": null,
+    "status": null,
+    "ai_fps": null,
+    "fg_pct": 101.6,
+    "ai_proc_cpu_pct": 0.0,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": null,
+    "infer_ms": null,
+    "prepost_ms": null,
+    "ui_lag_p95_ms": 1.68,
+    "other_procs_cpu_pct": 0.96,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI on NPU",
+    "device": "NPU",
+    "status": "ok",
+    "ai_fps": 29.93,
+    "fg_pct": 95.8,
+    "ai_proc_cpu_pct": 2.2,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": 4.42,
+    "infer_ms": 11.05,
+    "prepost_ms": 3.8,
+    "ui_lag_p95_ms": 6.39,
+    "other_procs_cpu_pct": 1.51,
+    "npu_util": 7.38,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI off",
+    "device": null,
+    "status": null,
+    "ai_fps": null,
+    "fg_pct": 101.4,
+    "ai_proc_cpu_pct": 0.03,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": null,
+    "infer_ms": null,
+    "prepost_ms": null,
+    "ui_lag_p95_ms": 5.1,
+    "other_procs_cpu_pct": 1.55,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI on NPU",
+    "device": "NPU",
+    "status": "ok",
+    "ai_fps": 30.0,
+    "fg_pct": 96.3,
+    "ai_proc_cpu_pct": 2.2,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": 4.41,
+    "infer_ms": 10.08,
+    "prepost_ms": 3.78,
+    "ui_lag_p95_ms": 4.34,
+    "other_procs_cpu_pct": 1.13,
+    "npu_util": 7.4,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI off",
+    "device": null,
+    "status": null,
+    "ai_fps": null,
+    "fg_pct": 101.2,
+    "ai_proc_cpu_pct": 0.03,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": null,
+    "infer_ms": null,
+    "prepost_ms": null,
+    "ui_lag_p95_ms": 1.98,
+    "other_procs_cpu_pct": 1.22,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI on GPU",
+    "device": "GPU",
+    "status": "ok",
+    "ai_fps": 28.85,
+    "fg_pct": 90.0,
+    "ai_proc_cpu_pct": 4.19,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": 8.71,
+    "infer_ms": 24.22,
+    "prepost_ms": 3.62,
+    "ui_lag_p95_ms": 2.81,
+    "other_procs_cpu_pct": 2.22,
+    "npu_util": 0.0,
+    "gpu_util": 74.97
+   },
+   {
+    "label": "AI off",
+    "device": null,
+    "status": null,
+    "ai_fps": null,
+    "fg_pct": 100.9,
+    "ai_proc_cpu_pct": 0.0,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": null,
+    "infer_ms": null,
+    "prepost_ms": null,
+    "ui_lag_p95_ms": 5.05,
+    "other_procs_cpu_pct": 1.12,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI on CPU",
+    "device": "CPU",
+    "status": "ok",
+    "ai_fps": 15.16,
+    "fg_pct": 85.7,
+    "ai_proc_cpu_pct": 13.13,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": 51.96,
+    "infer_ms": 61.29,
+    "prepost_ms": 4.51,
+    "ui_lag_p95_ms": 11.28,
+    "other_procs_cpu_pct": 1.34,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   },
+   {
+    "label": "AI off",
+    "device": null,
+    "status": null,
+    "ai_fps": null,
+    "fg_pct": 98.9,
+    "ai_proc_cpu_pct": 0.0,
+    "cpu_pct": 100.0,
+    "ai_proc_cpu_ms_per_frame": null,
+    "infer_ms": null,
+    "prepost_ms": null,
+    "ui_lag_p95_ms": 4.19,
+    "other_procs_cpu_pct": 2.38,
+    "npu_util": 0.0,
+    "gpu_util": 0.0
+   }
+  ]
+ },
+ "llm": {
+  "date": "2026-11-12",
+  "model": {
+   "hf_id": "OpenVINO/Phi-3-mini-4k-instruct-int4-cw-ov",
+   "params": "3.8B",
+   "weight_mode": "int4_sym",
+   "license": "MIT",
+   "weights_gb": 2.01
+  },
+  "max_new_tokens": 160,
+  "prompts": 4,
+  "devices": {
+   "NPU": {
+    "status": "executed",
+    "tok_s": 21.6,
+    "tok_s_range": [
+     21.1,
+     23.0
+    ],
+    "ttft_ms": 698.0,
+    "cores_busy": 0.14,
+    "load_cached_s": 2.6,
+    "load_cold_s": 29.1,
+    "load_nocache_s": null
+   },
+   "CPU": {
+    "status": "executed",
+    "tok_s": 19.1,
+    "tok_s_range": [
+     16.9,
+     19.5
+    ],
+    "ttft_ms": 476.0,
+    "cores_busy": 1.96,
+    "load_cached_s": null,
+    "load_cold_s": null,
+    "load_nocache_s": 1.3
+   },
+   "GPU": {
+    "status": "executed",
+    "tok_s": 21.8,
+    "tok_s_range": [
+     21.6,
+     22.0
+    ],
+    "ttft_ms": 103.0,
+    "cores_busy": 1.02,
+    "load_cached_s": 1.8,
+    "load_cold_s": 5.6,
+    "load_nocache_s": null
+   }
+  }
+ },
+ "env": {
+  "npu_driver": "32.0.100.5540",
+  "graphics_driver": "32.0.101.9175",
+  "on_ac": true,
+  "recorded": "2026-11-12",
+  "openvino": "2026.4.1",
+  "device_names": {
+   "CPU": "Intel(R) Core(TM) Ultra 5 322",
+   "GPU": "Intel(R) Graphics (iGPU)",
+   "NPU": "Intel(R) AI Boost"
+  },
+  "power": "ac",
+  "openvino_genai": "2026.4.1.0",
+  "python": "3.12.10"
+ }
+}

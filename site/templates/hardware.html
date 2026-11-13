@@ -1,0 +1,76 @@
+<h1>Hardware</h1>
+<p class="lede">The test machine is a 15-inch 2-in-1 laptop (Lenovo IdeaPad 5 2-in-1 15IPH11) with an Intel Core Ultra 5 322, the entry Core Ultra 5 in the Panther Lake (Core Ultra Series 3) family. This page condenses the sourced <a href="$repo/blob/main/docs/PANTHER_LAKE_REFERENCE.md">hardware reference</a> (last researched $ref_date).</p>
+<p class="small">How to read the labels:
+<span class="label vendor">Vendor</span> Intel, Lenovo or Microsoft said it.
+<span class="label indep">Independent</span> a third party measured it.
+<span class="label derived">Derived</span> arithmetic or inference from cited figures.
+<span class="label unverified">Unverified</span> no confirming source found.
+<span class="label local">Local</span> observed on the test unit.</p>
+
+<h2 id="glance">At a glance</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Item</th><th scope="col">Core Ultra 5 322</th><th scope="col">Basis / source</th></tr></thead>
+<tbody>
+<tr><td>Family</td><td>Panther Lake, Core Ultra Series 3; launched Q1'26</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a></td></tr>
+<tr><td>Process</td><td>CPU tile Intel 18A, GPU tile Intel 3</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a></td></tr>
+<tr><td>CPU</td><td>6 cores / 6 threads: 2 P-cores (2.5 / 4.4 GHz) + 4 LP E-cores (1.9 / 3.3 GHz), no Hyper-Threading, 12 MB cache</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a>, <a href="$psref">Lenovo PSREF</a></td></tr>
+<tr><td>Power</td><td>25 W base, 55 W max turbo, 12 W minimum assured. The laptop's actual PL1/PL2 are not known.</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a>; firmware limits <span class="label unverified">Unverified</span></td></tr>
+<tr><td>iGPU</td><td>"Intel Graphics" (not Arc branded), <strong>2 Xe3 cores</strong>, 2.3 GHz max</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a>, <a href="$qrg">Quick Reference Guide</a></td></tr>
+<tr><td>iGPU peak AI</td><td>18 TOPS INT8</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a></td></tr>
+<tr><td>NPU</td><td>NPU 5 ("AI Boost"), <strong>46 TOPS INT8</strong> peak, sparsity support</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a></td></tr>
+<tr><td>Platform TOPS</td><td>Not published for this SKU. NPU + GPU = 64 TOPS (excludes CPU). The family's "up to 180" applies to select H parts only.</td><td><span class="label derived">Derived</span> from <a href="$ark">ARK</a>; <a href="https://cdrdv2-public.intel.com/855291/Intel%C2%AE%20Core%E2%84%A2%20Ultra%20Processors%20Series%203%20for%20Edge%20Overview_2.pdf">Edge overview</a></td></tr>
+<tr><td>Memory</td><td>SoC supports DDR5-6400 / LPDDR5X-7467, 2 channels. <strong>This laptop: DDR5-5600 SO-DIMMs</strong>, dual channel.</td><td><span class="label vendor">Vendor</span> <a href="$ark">Intel ARK</a>, <a href="$psref">Lenovo PSREF</a></td></tr>
+<tr><td>Xe3 engines</td><td>16 vector engines and 16 XMX matrix engines (2 cores x 8)</td><td><span class="label derived">Derived</span> from <a href="$cnc">Chips and Cheese</a></td></tr>
+<tr><td>Die</td><td>Probably a harvested 4-Xe3 GPU tile and 4P+4LPE compute tile; the 2P+4LPE layout matches no published die config</td><td><span class="label unverified">Unverified</span> inference, <a href="$cnc">Chips and Cheese</a></td></tr>
+<tr><td>OpenVINO device names</td><td><code>Intel(R) Graphics (iGPU)</code> and <code>Intel(R) AI Boost</code>; NPU capabilities <code>FP16, INT8</code></td><td><span class="label local">Local</span> OpenVINO 2026.4.1, Windows 11</td></tr>
+</tbody></table></div>
+
+<h2 id="npu">The NPU across generations</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col"></th><th scope="col">NPU 3 (Meteor Lake)</th><th scope="col">NPU 4 (Lunar Lake)</th><th scope="col">NPU 5 (Panther Lake)</th></tr></thead>
+<tbody>
+<tr><td>Peak INT8 TOPS</td><td>~11 to 11.5 (<a href="https://www.theregister.com/2024/06/04/intel_details_lunar_lake_tops/">The Register</a>)</td><td>up to 48 (<a href="https://techpowerup.com/review/intel-lunar-lake-technical-deep-dive/6.html">TechPowerUp</a>)</td><td>up to 50 in the family; 46 on the 322 (<a href="$ark">ARK</a>)</td></tr>
+<tr><td>Neural compute engines</td><td>2</td><td>6</td><td>3, each with a roughly doubled MAC array (<a href="https://www.jonpeddie.com/techwatch/intel-npu5-in-panther-lake/">Jon Peddie Research</a>)</td></tr>
+<tr><td>New data types</td><td>n/a</td><td>n/a</td><td>Native FP8 (<a href="$cnc">Chips and Cheese</a>). Not exposed as an OpenVINO NPU capability on the test unit <span class="label local">Local</span></td></tr>
+<tr><td>Area</td><td>n/a</td><td>baseline</td><td>~40% smaller than NPU 4; Intel frames it as ~40% better TOPS/area <span class="label vendor">Vendor</span></td></tr>
+</tbody></table></div>
+<p class="small muted">Per-clock MAC counts come only from secondary sources and are <span class="label unverified">Unverified</span> against an Intel document.</p>
+
+<h2 id="drivers">Drivers and software used for these results</h2>
+<div class="table-wrap"><table>
+<thead><tr><th scope="col">Component</th><th scope="col">Version on the test laptop</th><th scope="col">Notes</th></tr></thead>
+<tbody>
+<tr><td>Intel NPU driver</td><td><strong>$npu_driver</strong></td><td>OpenVINO 2026.4 recommends 32.0.100.5540 or later on Core Ultra Series 3 (known issue CVS-233822: possible crashes with older drivers). <a href="https://www.intel.com/content/www/us/en/download/794734/intel-npu-driver-windows.html">Download</a></td></tr>
+<tr><td>Intel graphics driver</td><td><strong>$graphics_driver</strong></td><td>Covers "Intel Graphics for Intel Core Ultra Series 3". <a href="https://www.intel.com/content/www/us/en/download/785597/intel-arc-graphics-windows.html">Download</a></td></tr>
+<tr><td>OpenVINO</td><td>$openvino</td><td>NPU computes in FP16 and prefers static shapes; <code>CACHE_DIR</code> separates compile time from inference (<a href="https://docs.openvino.ai/2026/openvino-workflow/running-inference/inference-devices-and-modes/npu-device.html">NPU device docs</a>)</td></tr>
+<tr><td>OpenVINO GenAI</td><td>$openvino_genai</td><td>LLMs on the NPU need symmetric INT4 weights (<a href="https://docs.openvino.ai/2026/openvino-workflow-generative/inference-with-genai/inference-with-genai-on-npu.html">GenAI on NPU guide</a>)</td></tr>
+<tr><td>Python</td><td>$python</td><td>Windows 11, on AC power for every run</td></tr>
+</tbody></table></div>
+<p>The earlier driver pair (NPU 32.0.100.4724, graphics 32.0.101.8860) gave preliminary results while other jobs shared the machine; they are archived and not shown here. See the <a href="$repo/blob/main/docs/DRIVER_SETUP.md">driver setup guide</a> for the history and install steps.</p>
+
+<h2 id="laptop">The laptop</h2>
+<p>From the <a href="$psref">Lenovo PSREF spec sheet</a> <span class="label vendor">Vendor</span>: CPU options Core Ultra 5 322, 325 or Core Ultra 7 355; 2 x DDR5-5600 SO-DIMM, dual channel, up to 32 GB; 2 x M.2 PCIe 4.0 x4; 15.3" WUXGA IPS or 2.5K OLED touch display; 60 or 84 Wh battery with a 65 W USB-C adapter; sold as a Copilot+ PC.</p>
+
+<h2 id="why">Why this matters for the results</h2>
+<ul>
+<li><strong>Memory bandwidth bounds LLM decode.</strong> DDR5-5600 is below the SoC's DDR5-6400 ceiling, and the NPU, iGPU and CPU share it. That is why the three devices decode Phi-3-mini within a small factor of each other. <span class="label derived">Derived</span></li>
+<li><strong>A small CPU and a small GPU.</strong> With 6 threads and 2 Xe3 cores, this is the lowest Panther Lake configuration. Bigger SKUs will show smaller CPU penalties and a much stronger iGPU.</li>
+<li><strong>Peak TOPS are vendor ceilings.</strong> 46 NPU + 18 GPU TOPS are INT8 peaks under ideal conditions (<a href="$qrg">QRG footnote 1</a>). This site reports measured latency and throughput instead.</li>
+</ul>
+
+<h2 id="reviews">Independent reviews</h2>
+<ul>
+<li><a href="https://www.notebookcheck.net/Panther-Lake-debut-Core-Ultra-5-322-reviewed-for-the-first-time.1317785.0.html">Notebookcheck: Core Ultra 5 322 first review</a> <span class="label indep">Independent</span> (14-inch sibling): Cinebench R23 multi 7862, single 1782; weak iGPU, over 15 h Wi-Fi browsing; no NPU testing.</li>
+<li><a href="$cnc">Chips and Cheese: Panther Lake's reveal at ITT 2025</a>: architecture analysis of Intel's disclosures (not measurements).</li>
+<li><a href="https://www.phoronix.com/review/intel-arc-b390-panther-lake-linux/10">Phoronix: Arc B390 on Linux</a> <span class="label indep">Independent</span>, 12-Xe H part, not representative of the 322's 2-Xe GPU.</li>
+</ul>
+
+<h2 id="sources">Primary sources</h2>
+<ul class="small">
+<li><a href="$ark">Intel ARK: Core Ultra 5 322 specifications</a></li>
+<li><a href="$qrg">Intel Core Ultra Series 3 Quick Reference Guide (PDF)</a></li>
+<li><a href="$psref">Lenovo PSREF: IdeaPad 5 2-in-1 15IPH11 (PDF)</a></li>
+<li><a href="https://docs.openvino.ai/releasenotes">OpenVINO release notes</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/download/794734/intel-npu-driver-windows.html">Intel NPU driver for Windows</a> and <a href="https://www.intel.com/content/www/us/en/download/785597/intel-arc-graphics-windows.html">Intel Arc and Intel Graphics driver</a></li>
+<li>Full list with Linux support notes: <a href="$repo/blob/main/docs/PANTHER_LAKE_REFERENCE.md">docs/PANTHER_LAKE_REFERENCE.md</a></li>
+</ul>

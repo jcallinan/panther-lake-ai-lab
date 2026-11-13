@@ -148,6 +148,7 @@ table { border-collapse: collapse; width: 100%; font-size: .93rem; }
 th, td { padding: .5rem .7rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
 thead th { background: var(--surface-2); font-weight: 600; }
 tbody tr:last-child td { border-bottom: 0; }
+tbody th[scope="row"] { white-space: nowrap; font-weight: 600; }
 td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .label { display: inline-block; font-size: .75rem; font-weight: 700; padding: .05rem .45rem; border-radius: 999px; border: 1px solid var(--border); white-space: nowrap; }
 .label.vendor { background: var(--warn-bg); border-color: var(--warn-border); }
