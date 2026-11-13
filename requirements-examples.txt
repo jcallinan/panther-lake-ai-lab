@@ -1,0 +1,12 @@
+# Extra dependencies for the NPU showcase examples in examples/ (versions verified on 2026-11-11).
+# Install with: .\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-examples.txt
+openvino-genai==2026.4.1.0
+openvino-tokenizers==2026.4.1.0
+opencv-python>=5.0,<6
+pillow>=11
+imageio>=2.37
+imageio-ffmpeg>=0.6
+matplotlib>=3.9
+huggingface_hub>=0.30
+tokenizers>=0.21
+psutil>=6

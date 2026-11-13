@@ -60,8 +60,8 @@ py -3 -m venv .venv
 | Windows build | Pending |
 | BIOS version | Pending |
 | CPU model and topology | Pending |
-| GPU driver version | Pending |
-| NPU device and driver | Pending |
+| GPU driver version | 32.0.101.8860 (2026-06-24) baseline; see [DRIVER_SETUP.md](DRIVER_SETUP.md) |
+| NPU device and driver | Intel(R) AI Boost, 32.0.100.4724 (2026-03-18) baseline; 5540+ recommended |
 | RAM modules and channel configuration | Pending |
 | SSD model | Pending |
 | OpenVINO version | Pending |

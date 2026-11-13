@@ -12,6 +12,8 @@ Reproducible CPU, GPU, and NPU experiments for Intel Core Ultra Series 3 (Panthe
 
 ## Quick start (Windows PowerShell)
 
+Prerequisites: Python 3.12 (`winget install -e --id Python.Python.3.12`, which includes the `py` launcher), plus current Intel NPU and graphics drivers. See **[Driver setup](docs/DRIVER_SETUP.md)** for the minimum versions, download links and install steps. OpenVINO 2026.4 needs NPU driver 32.0.100.5540 or later on Core Ultra Series 3.
+
 Clone this repository and run:
 
 ```powershell
@@ -50,6 +52,26 @@ These are research-stage documents; no experimental findings or conference accep
 ## First test session
 
 Before changing drivers or hardware, follow the [first laptop test protocol](docs/FIRST_TEST_SESSION.md) and preserve a sanitized baseline. The [Kanban board](docs/PROJECT_BOARD.md) now tracks all 16 issues, including academic publication work.
+
+## NPU showcase examples
+
+Each example runs the same workload on NPU, GPU and CPU. It reports the device that actually executed the work (`EXECUTION_DEVICES`) and never falls back to another device silently. Timings were measured on a Core Ultra 5 322 and depend on the driver version. See each example's README for methodology and caveats.
+
+| Example | What it shows | Preview |
+|---|---|---|
+| [Performance Atlas](examples/perf_atlas/) | 162-configuration sweep (size × batch × precision × device), with p50/p95 and numpy-verified correctness, showing where the NPU wins and where it doesn't | ![](media/perf_atlas.gif) |
+| [Vision side-by-side](examples/vision_side_by_side/) | Object detection plus background blur on the same video, NPU vs GPU vs CPU | ![](media/vision_side_by_side.gif) |
+| [Depth Parallax](examples/depth_parallax/) | Per-frame monocular depth on the NPU turns flat video into an orbiting 3D point cloud | ![](media/depth_parallax.gif) |
+| [Offload dashboard](examples/offload_dashboard/) | Always-on AI on CPU, then GPU, then NPU, measuring how much foreground CPU work survives each placement | ![](media/offload_dashboard.gif) |
+| [LLM chat](examples/llm_chat/) | Phi-3-mini int4 chatting on the NPU; replay of the three devices at measured token timings | ![](media/llm_chat.gif) |
+
+Setup:
+```powershell
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-examples.txt
+.\.venv\Scripts\python.exe scripts\fetch_models.py               # ~2 GB, mostly the LLM; --only vision|depth|llm
+.\.venv\Scripts\python.exe -m examples.vision_side_by_side      # each example: python -m examples.<name>
+```
+Models download to `models/`, and stock clips download automatically to `assets/clips/` on first use. Both are gitignored; clip licences are listed in [assets/CLIPS_ATTRIBUTION.md](assets/CLIPS_ATTRIBUTION.md). To re-run every benchmark and re-record all media one at a time, use `scripts\record_all.ps1`. Hardware background: [docs/PANTHER_LAKE_REFERENCE.md](docs/PANTHER_LAKE_REFERENCE.md).
 
 ## NPU experiment suite
 

@@ -3,3 +3,8 @@ __pycache__/
 *.pyc
 benchmarks/results/*
 !benchmarks/results/.gitkeep
+# NPU showcase examples
+models/
+assets/clips/
+media/mp4/
+.vscode/
