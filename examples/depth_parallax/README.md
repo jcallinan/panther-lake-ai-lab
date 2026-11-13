@@ -9,8 +9,8 @@ the far canyon. The composite shows the input frame, the colourised NPU depth (b
 re-projected hero view. A HUD shows NPU latency, and an inset compares the same model on NPU, GPU and CPU.
 
 **Why the NPU:** per-frame depth is the expensive part. On this Core Ultra 5 322, the 364x364 model takes about
-13 ms on the NPU. The CPU takes 170-245 ms, so the NPU is roughly 13-16x faster. The integrated GPU (2 Xe3
-cores) takes 19-29 ms. With the NPU doing inference, the CPU is free to do the 3D rendering.
+12.5 ms on the NPU. The CPU takes 134 ms, so the NPU is about 10.7x faster. The integrated GPU (2 Xe3
+cores) takes 17.3 ms (NPU 1.4x faster). With the NPU doing inference, the CPU is free to do the 3D rendering.
 
 ## Run
 
@@ -31,21 +31,28 @@ cores) takes 19-29 ms. With the NPU doing inference, the CPU is free to do the 3
 | `--output` | Results JSON, default `benchmarks/results/depth_parallax.json`. It holds per-device latency stats, `compile_s` with a cold/warm cache flag, `EXECUTION_DEVICES`, frame count, and the clip with its licence. |
 | `--size` | Model input side, a multiple of 14 (default 364; 518 also works on the NPU at about 25 ms). |
 
-The first NPU compile takes 15-35 s. The blob is cached in `models/npucache` (gitignored), and later starts
-load it in under 0.1 s. A splash screen says "compiling" while this happens.
+The first NPU compile takes tens of seconds (17 s in the preliminary run; the clean run started from a warm cache, so
+no cold figure was recorded). The blob is cached in `models/npucache` (gitignored), and a warm start loaded it in
+1.7 s in the clean run. A splash screen says "compiling" while this happens.
 
-## Measured (this laptop, 2026-11-11, other demos sharing the NPU and CPU, so numbers are noisy)
+## Measured (clean run, 2026-11-12, NPU driver 32.0.100.5540)
+
+Idle laptop on AC power, graphics driver 32.0.101.9175, OpenVINO 2026.4.1.
 
 | | NPU | GPU | CPU |
 |---|---|---|---|
-| Startup benchmark, median ms (364x364) | 12.8 | 19.3-28.7 | 172-244 |
-| Compile, cold / cached | 17.2 s / 0.07 s | 5.7 s / 2.5 s | 5-8 s (no cache) |
+| Startup benchmark, median (p95) ms (364x364) | 12.5 (20.1) | 17.3 (17.4) | 133.9 (138.7) |
+| Compile, warm cache / no cache | 1.7 s (warm) | 2.5 s (warm) | 4.6 s (no cache) |
 
-Live run on the `forest` clip with recording on:
-- NPU latency per frame: p50 17.4 ms, p95 19.0 ms. This is `InferRequest.latency`. It is higher than the
+(The preliminary 2026-11-11 run, with other demos sharing the machine and NPU driver 32.0.100.4724, measured the
+NPU at 12.8 ms, the GPU at 19-29 ms and the CPU at 172-244 ms, with a 17.2 s cold NPU compile.)
+
+Live run on the `forest` clip with recording on (359 frames):
+- NPU latency per frame: p50 13.9 ms, p95 15.2 ms. This is `InferRequest.latency`. It is higher than the
   isolated benchmark because the host thread is busy at the same time.
-- Host work per frame: 36 ms. That covers preprocessing, depth normalisation, the 3D re-projection (19 ms) and the HUD.
-- End to end: 25-30 FPS, or about 40 FPS on simpler content without recording.
+- Host work per frame: 28.1 ms median. That covers preprocessing, depth normalisation, the 3D re-projection (14.7 ms)
+  and the HUD.
+- End to end: 32.7 FPS with recording on.
 
 Inference of frame N+1 overlaps with rendering of frame N. The demo is therefore **CPU-render bound, not NPU
 bound**, and the HUD reports the two separately.

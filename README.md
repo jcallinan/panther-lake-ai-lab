@@ -55,7 +55,7 @@ Before changing drivers or hardware, follow the [first laptop test protocol](doc
 
 ## NPU showcase examples
 
-Each example runs the same workload on NPU, GPU and CPU. It reports the device that actually executed the work (`EXECUTION_DEVICES`) and never falls back to another device silently. Timings were measured on a Core Ultra 5 322 and depend on the driver version. See each example's README for methodology and caveats.
+Each example runs the same workload on NPU, GPU and CPU. It reports the device that actually executed the work (`EXECUTION_DEVICES`) and never falls back to another device silently. Timings were measured on a Core Ultra 5 322 in a clean sequential run on 2026-11-12 (idle laptop, on AC power, NPU driver 32.0.100.5540, graphics driver 32.0.101.9175, OpenVINO 2026.4.1) and depend on the driver version. See each example's README for methodology and caveats.
 
 | Example | What it shows | Preview |
 |---|---|---|
@@ -87,4 +87,4 @@ After installing dependencies, run:
 .\.venv\Scripts\python.exe scripts\npu_anomaly_demo.py --devices CPU GPU NPU
 ```
 
-These are preliminary compatibility and latency tests. No device execution or NPU acceleration has been verified on the physical laptop yet.
+These are compatibility and latency smoke tests on tiny synthetic models (clean run, 2026-11-12, NPU driver 32.0.100.5540, OpenVINO 2026.4.1). Both scripts executed on the CPU, GPU and NPU, with the reported `EXECUTION_DEVICES` matching and results within about 1.4e-3 (matrix sweep) and 5.3e-5 (anomaly demo) of the numpy reference. At these sizes the NPU is the slowest device (anomaly demo p50: CPU 0.040 ms, GPU 0.075 ms, NPU 0.147 ms), so these tests show that execution works, not NPU acceleration. The NPU speed-ups are in the showcase examples above.

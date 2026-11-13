@@ -17,8 +17,9 @@ function Step($name, [scriptblock]$body) {
 
 if ($RecordOffload) {
   Step 'offload_dashboard (record)' {
-    powershell -ExecutionPolicy Bypass -File (Join-Path $root 'scripts\record_all.ps1') `
-      -Skip inventory,devices,matrix_sweep,anomaly,perf_atlas,vision_side_by_side,depth_parallax,llm_chat
+    # Call in-process: via `powershell -File`, a comma list arrives as ONE string and nothing is skipped.
+    & (Join-Path $root 'scripts\record_all.ps1') `
+      -Skip @('inventory','devices','matrix_sweep','anomaly','perf_atlas','vision_side_by_side','depth_parallax','llm_chat')
   }
 }
 Step 'charts'       { & $py scripts\make_charts.py }

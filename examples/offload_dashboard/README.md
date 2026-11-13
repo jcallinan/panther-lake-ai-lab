@@ -120,11 +120,13 @@ LUID→engine-type map (`telemetry.accelerators`).
   small CPU, and OpenVINO's CPU threads compete with your work for the two P-cores. Bigger chips will show smaller
   losses.
 * **Shared power budget.** CPU, iGPU and NPU share one package power limit. When all CPU threads are busy, the iGPU
-  clocks down: AI on the GPU then reaches only about 19–22 FPS while the iGPU reads 80–85 % busy. Even with AI on the
-  NPU, your work can lose a few percent, from the ~2 % CPU the AI process uses plus shared power and memory bandwidth.
+  clocks down: AI on the GPU then reaches 28.9 FPS in the clean run while the iGPU reads 74 % busy, and your work keeps 93 %
+  (the two rounds differ: 96 % and 90 %). Even with AI on the NPU, your work loses about 4 %, from the ~2 % CPU the AI
+  process uses plus shared power and memory bandwidth.
   The NPU mostly frees **CPU time**. It does not make the AI completely free.
 * **Pre/post still runs on the CPU** with the NPU and GPU too: about 2 ms of resize, blend, NMS and drawing per frame
-  when the machine is idle, and 3–5 ms when every thread is busy.
+  when the machine is idle, and 3.7–4.4 ms when every thread is busy (3.8 ms with the NPU, 3.7 ms with the GPU, 4.4 ms
+  with the CPU, in the clean run).
 * **Accelerator % is not compute load.** The PDH engine counter shows how much of the time the engine had work
   queued. NPU ≈ 6 % at 30 FPS means it is idle between frames; it is not a measure of TOPS used.
 * **AC vs. battery.** Turbo and power limits differ, and power is only reported on battery.
@@ -133,24 +135,25 @@ LUID→engine-type map (`telemetry.accelerators`).
 
 ## Results on this laptop
 
-> The numbers below come from a **short development run**: `--phase-seconds 6` (4 s AI-off phases), 2 rounds,
-> 6 foreground workers, on AC, NPU driver 32.0.100.5540, graphics driver 32.0.101.9175. Other agents were building
-> charts at the same time and used 5–35 % of the CPU (`other_procs_cpu_pct`). The AI-off phases varied by 39 %
-> (`baseline.spread_pct`). The default 15 s / 10 s run on an idle machine (`scripts/record_all.ps1`) regenerates the
-> GIF, PNG and JSON; refresh this table from `placements` in that JSON.
+> Clean run, 2026-11-12, NPU driver 32.0.100.5540 (graphics driver 32.0.101.9175, OpenVINO 2026.4.1): the default
+> 15 s AI phases / 10 s AI-off phases, 2 rounds, 6 foreground workers, on AC, on an otherwise idle laptop. Other
+> processes used about 1–3 % of the CPU (`other_procs_cpu_pct`). The AI-off baseline drifted −6.5 % and its phases
+> spread by 15 % (`baseline.spread_pct`). The table is read from `placements` in
+> `benchmarks/results/offload_dashboard.json`. An earlier short development run (2026-11-11, with other jobs running)
+> gave different numbers and is superseded.
 
 | Placement | AI FPS (target 30) | Your work kept (round 1 / 2) | AI process CPU (% of system) | CPU ms per AI frame | pre/post ms | Accelerator busy |
 |---|---|---|---|---|---|---|
-| **AI on CPU** | **12.7** | **80 %** (77 / 82) | 10.7 % | **50.2** | 5.1 | – |
-| AI on GPU | 19.2 | 81 % (77 / 86) | 2.6 % | 8.2 | 4.3 | iGPU 82 % |
-| **AI on NPU** | **28.3** | **94 %** (93 / 95) | 1.9 % | **4.0** | 4.4 | NPU 6 % |
+| **AI on CPU** | **15.2** | **86 %** (85 / 86) | 12.9 % | **51.2** | 4.4 | – |
+| AI on GPU | 28.9 | 93 % (96 / 90) | 3.9 % | 8.0 | 3.7 | iGPU 74 % |
+| **AI on NPU** | **30.0** | **96 %** (96 / 96) | 2.2 % | **4.4** | 3.8 | NPU 7 % |
 
 **Takeaways**
 
-* **CPU:** with every thread busy, AI on the CPU reaches only about 13 of the 30 FPS. It costs about 50 ms of CPU per
-  frame, and your work loses about a fifth of its throughput.
-* **GPU:** CPU cost per frame is low (about 8 ms), but because the iGPU shares the power budget with a fully loaded
-  CPU it only manages about 19 FPS.
-* **NPU:** holds about 28–30 FPS for about 4 ms of CPU per frame, roughly **12× less CPU than AI on the CPU**. Your
-  work keeps about 94 %. That remaining cost is CPU-side pre/post-processing plus shared power and memory, not
-  inference.
+* **CPU:** with every thread busy, AI on the CPU reaches only about 15 of the 30 FPS. It costs about 51 ms of CPU per
+  frame, and your work loses about 14 % of its throughput.
+* **GPU:** CPU cost per frame is low (about 8 ms) and the GPU nearly holds the 30 FPS target (28.9 FPS). Your work
+  keeps 93 % on average, but the two rounds differ (96 % and 90 %), so the GPU's cost is noisier than the NPU's.
+* **NPU:** holds the 30 FPS target (30.0) for about 4.4 ms of CPU per frame, roughly **12× less CPU than AI on the
+  CPU** and about half the GPU's CPU cost. Your work keeps 96 % in both rounds. That remaining cost is CPU-side
+  pre/post-processing plus shared power and memory, not inference.

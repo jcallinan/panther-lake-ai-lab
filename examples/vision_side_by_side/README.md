@@ -67,6 +67,21 @@ names, and the clip's name, licence and attribution.
 * All three devices run the same INT8 / FP32 model files. Their outputs differ slightly (scores, a box here
   and there) because of device-specific precision. That is expected, and the demo shows it as it is.
 
+## Results on this machine
+
+Clean run, 2026-11-12, NPU driver 32.0.100.5540 (graphics driver 32.0.101.9175, OpenVINO 2026.4.1): street clip,
+sequential mode, 324 frames, idle laptop on AC power. Median (p95) per-frame `infer()` time, excluding decode,
+pre/post-processing and drawing.
+
+| Device | Detect (YOLOX-Tiny INT8, 416) | Segment (selfie, 256) | Frame (detect + segment) | Frames/s at median |
+|---|---|---|---|---|
+| **NPU** | **2.29 ms** (2.47) | **0.84 ms** (0.94) | **3.13 ms** (3.38) | **319** |
+| GPU | 4.23 ms (4.35) | 1.08 ms (1.21) | 5.33 ms (5.52) | 188 |
+| CPU | 11.88 ms (13.10) | 2.62 ms (2.95) | 14.48 ms (15.98) | 69 |
+
+The NPU is 4.6x faster than the CPU and 1.7x faster than the GPU on the per-frame AI step. The end-to-end pipeline
+rate for all three devices together was 21.6 FPS, which is bounded by the sum of the device latencies plus drawing.
+
 ## Models
 
 | Task | Model | Licence | Pre/post-processing |

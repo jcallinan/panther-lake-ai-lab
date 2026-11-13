@@ -336,6 +336,16 @@ def llm_load(rec):
     return {"first": cold if cold is not None else first, "cached": cached, "first_label": label}
 
 
+def npu_llm_mislabelled():
+    """True when the NPU LLM first load is a slow load labelled 'cached' (pre-fix llm.py with a shared cache dir)."""
+    try:
+        _, devs = llm_devices()
+        info = llm_load(devs["NPU"])
+        return info["first_label"] == "cached" and (info["first"] or 0) > 10
+    except Exception:
+        return False
+
+
 OFFLOAD_JSON = [RESULTS / "offload_dashboard.json"]  # overridable with --offload-json (for testing new formats)
 
 
@@ -534,9 +544,10 @@ def c_llm(draw=True):
             + (f"{loads[k]['cached']} s" if loads[k]['cached'] is not None else "n/a")
             for k in DEVICES if k in devs]
     sec = Section("llm_compare", title, title + ".", ["llm_chat.json"], nums,
-                  ["Medians over 4 prompts, greedy decoding, max 160 new tokens, devices run one at a time.",
-                   "NPU first load (30.22 s) is recorded as cache='cached' but is really a cold compile: depth_parallax "
-                   "wrote a blob to the shared models/npucache just before, so the 'blobs present' check misfired."])
+                  ["Medians over 4 prompts, greedy decoding, max 160 new tokens, devices run one at a time."]
+                  + (["NPU first load is recorded as cache='cached' but is really a cold compile: another example "
+                      "had written a blob to the shared models/npucache, so the 'blobs present' check misfired "
+                      "(fixed in examples/llm_chat/llm.py)."] if npu_llm_mislabelled() else []))
     if not draw:
         return sec
 
@@ -800,8 +811,9 @@ def c_compile(draw=True):
         title = "First compile vs cached load, per device"
     sec = Section("compile_cost", title, title + ".", srcs, nums,
                   ["Vision = detect + segment compile_s summed; that example uses no compile cache, so every start pays it.",
-                   "Depth cached load was not recorded in the clean run (cache was cold).",
-                   "LLM NPU first load is labelled 'cached' in the JSON but is a cold compile (see llm_compare)."])
+                   "Depth cached load was not recorded in the clean run (cache was cold)."]
+                  + (["LLM NPU first load is labelled 'cached' in the JSON but is a cold compile (see llm_compare)."]
+                     if npu_llm_mislabelled() else []))
     if not draw:
         return sec
 
@@ -841,7 +853,8 @@ def c_compile(draw=True):
                        loc="upper right", fontsize=13)
     footer(fig, "Source: benchmarks/results/llm_chat.json (load_s), depth_parallax.json (compile_s), vision_side_by_side."
                 "json (detect + segment compile_s). Vision uses no compile cache, so it pays this on every start; depth "
-                "cached load not recorded in the clean run (\u2014 = no cached start). LLM NPU first load is a cold compile despite its 'cached' label.")
+                "cached load not recorded in the clean run (\u2014 = no cached start)."
+                + (" LLM NPU first load is a cold compile despite its 'cached' label." if npu_llm_mislabelled() else ""))
     save(fig, sec.name)
     return sec
 

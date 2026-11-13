@@ -44,7 +44,6 @@ All PNGs are 1920 x 1080. File names are a contract with the decks and the site;
 **Notes:**
 
 - Medians over 4 prompts, greedy decoding, max 160 new tokens, devices run one at a time.
-- NPU first load (30.22 s) is recorded as cache='cached' but is really a cold compile: depth_parallax wrote a blob to the shared models/npucache just before, so the 'blobs present' check misfired.
 
 ### `cpu_cost.png`
 
@@ -81,7 +80,6 @@ All PNGs are 1920 x 1080. File names are a contract with the decks and the site;
 
 - Vision = detect + segment compile_s summed; that example uses no compile cache, so every start pays it.
 - Depth cached load was not recorded in the clean run (cache was cold).
-- LLM NPU first load is labelled 'cached' in the JSON but is a cold compile (see llm_compare).
 
 ### `npu_batch_bug.png`
 
