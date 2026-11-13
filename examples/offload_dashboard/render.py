@@ -163,7 +163,7 @@ def dashboard_frame(video, st) -> np.ndarray:
     pc = [phase_color(d) for d in hist["device"]]
     cx_, cw = 672, 592
     ch, gap, cy = 152, 6, 64
-    line_chart(img, cx_, cy, cw, ch, "Foreground work, % of baseline ops/s", t,
+    line_chart(img, cx_, cy, cw, ch, "Your work (zlib ops/s), % of the last AI-off phase", t,
                [("fg", hist["fg_pct"], pc)], T, phases, 120, "%", ref=100)
     line_chart(img, cx_, cy + (ch + gap), cw, ch, "CPU used by the AI pipeline process, % of all 6 threads", t,
                [("ai", hist["ai_cpu"], pc)], T, phases, 30, "%")
@@ -284,13 +284,16 @@ def static_chart(data: dict, path):
         for x, p in zip(xs, ps):  # individual rounds as dots: the spread stays visible
             rv = [v for v in (p["result"].get("rounds") or {}).get(key, []) if v is not None]
             if len(rv) > 1:
-                ax.scatter([x] * len(rv), rv, s=26, color=SURFACE, edgecolor=INKH, linewidth=1.2, zorder=3)
+                ax.scatter([x + 0.38] * len(rv), rv, s=26, color=SURFACE, edgecolor=INKH, linewidth=1.2, zorder=3,
+                           clip_on=False)
                 dots = True
         for x, p, v in zip(xs, ps, vals):
-            rv = [r for r in (p["result"].get("rounds") or {}).get(key, []) if r is not None]
-            top = max([v or 0] + rv)
-            ax.text(x, top + ylim * 0.015, "n/a" if v is None else fmtv(v), ha="center", va="bottom",
-                    fontsize=11, color=INKH, fontweight="semibold")
+            if v is not None and v > ylim * 0.15:  # value inside the bar top, clear of the round dots
+                ax.text(x, v - ylim * 0.03, fmtv(v), ha="center", va="top", fontsize=11, color="white",
+                        fontweight="semibold")
+            else:
+                ax.text(x, (v or 0) + ylim * 0.015, "n/a" if v is None else fmtv(v), ha="center", va="bottom",
+                        fontsize=11, color=INKH, fontweight="semibold")
         if dots:
             ax.scatter([], [], s=26, color=SURFACE, edgecolor=INKH, linewidth=1.2, label="individual rounds")
         if ref is not None:
@@ -351,8 +354,10 @@ def static_chart(data: dict, path):
     ax.set_ylim(0, max(proc + [1]) * 1.3)
     ax.set_title("CPU time per AI frame (ms)\nwhole AI process, incl. inference threads")
     fig.suptitle(data["headline"], x=0.01, ha="left", fontsize=14.5, fontweight="semibold", y=0.99)
-    fig.text(0.01, 0.015, data["footnote"], fontsize=8.8, color=MUTEDH, ha="left")
-    fig.tight_layout(rect=(0, 0.04, 1, 0.95))
+    import textwrap
+    fig.text(0.01, 0.012, "\n".join(textwrap.wrap(data["footnote"], 215)), fontsize=8.8, color=MUTEDH, ha="left",
+             va="bottom")
+    fig.tight_layout(rect=(0, 0.06, 1, 0.95))
     fig.savefig(path, dpi=100)
     plt.close(fig)
     return path

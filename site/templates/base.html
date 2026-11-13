@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$title</title>
+<meta name="description" content="$description">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><span class="dots" aria-hidden="true"><i style="background:var(--npu)"></i><i style="background:var(--gpu)"></i><i style="background:var(--cpu)"></i></span>Panther Lake AI Lab</a>
+    <nav aria-label="Main">
+      <ul>
+$nav
+      </ul>
+    </nav>
+    <a class="nav-gh" href="$repo">Source on GitHub</a>
+  </div>
+</header>
+<main id="main" class="wrap">
+$content
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <p>Code and site: <a href="$repo/blob/main/LICENSE">MIT licence</a>. Stock video footage: <a href="$repo/blob/main/assets/CLIPS_ATTRIBUTION.md">clip sources and licences</a> (Wikimedia Commons, CC0 / public domain). Model licences are listed in each demo's README.</p>
+    <p>An independent hobby and research project. Not affiliated with, sponsored by or endorsed by Intel or Lenovo. Product names are used only to identify the hardware tested.</p>
+    <p>Results recorded $results_date on NPU driver $npu_driver and graphics driver $graphics_driver, OpenVINO $openvino. Site built $built.</p>
+  </div>
+</footer>
+</body>
+</html>

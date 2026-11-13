@@ -3,11 +3,11 @@
 **Story:** run always-on AI on the NPU and your CPU stays free for the work you are actually doing.
 
 This demo runs one continuous AI workload: video-call style background blur plus object detection on a video
-stream, paced to 30 FPS. It runs the workload on the **CPU**, then the **GPU**, then the **NPU**. The whole time, a
-fixed CPU-bound "user work" job runs in the foreground. A live dashboard shows how fast the AI runs, how much of your
-own work still gets done, and who is using the CPU.
+stream, paced to 30 FPS. It places that workload on the **CPU**, the **GPU** and the **NPU** in turn. The whole time, a
+CPU-bound "user work" job keeps every CPU thread busy in the foreground. A live dashboard shows how fast the AI runs,
+how much of your own work still gets done, and how much CPU time each AI frame costs.
 
-![Offload dashboard: baseline, AI on CPU, GPU, NPU, then a summary](../../media/offload_dashboard.gif)
+![Offload dashboard: AI on CPU, GPU and NPU, separated by AI-off phases, then a summary](../../media/offload_dashboard.gif)
 
 Static summary: [`media/offload_dashboard.png`](../../media/offload_dashboard.png) · raw numbers:
 `benchmarks/results/offload_dashboard.json`.
@@ -15,51 +15,67 @@ Static summary: [`media/offload_dashboard.png`](../../media/offload_dashboard.pn
 ## Run
 
 ```powershell
-.venv\Scripts\python.exe -m examples.offload_dashboard                       # live window, 15 s per phase
+.venv\Scripts\python.exe -m examples.offload_dashboard                       # live window, ~3 min
 .venv\Scripts\python.exe -m examples.offload_dashboard --no-display --record  # headless, writes GIF + MP4
-.venv\Scripts\python.exe -m examples.offload_dashboard --devices NPU CPU --phase-seconds 10
+.venv\Scripts\python.exe -m examples.offload_dashboard --phase-seconds 6 --rounds 1   # quick check (~1 min)
 ```
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `--phase-seconds` | 15 | length of each phase; the first `--settle` (2) seconds of each phase are left out of the stats |
-| `--devices` | `CPU GPU NPU` | AI placements to run, in this order |
+| `--phase-seconds` | 15 | length of each AI phase; the first `--settle` (2) seconds of every phase are left out of the stats |
+| `--baseline-seconds` | ⅔ of `--phase-seconds` (10) | length of each AI-off phase |
+| `--rounds` | 2 | how many times to run each placement. The order alternates: CPU→GPU→NPU, then NPU→GPU→CPU |
+| `--devices` | `CPU GPU NPU` | AI placements to run |
+| `--fg-workers` | logical CPUs (6) | foreground worker processes; the default keeps every thread busy |
+| `--no-interleave` | off | use only one AI-off phase at the start and one at the end (the older design) |
 | `--record` | off | writes `media/offload_dashboard.gif` (sped up to about 20 s, under 5 MB) and `media/mp4/offload_dashboard.mp4` (real time) |
 | `--no-display` | off | headless (no OpenCV window) |
-| `--output` | `benchmarks/results/offload_dashboard.json` | full results: config, compile info, per-phase means, every 0.5 s sample |
-| `--fg-workers` | logical CPUs − 2 (4) | number of foreground worker processes |
+| `--output` | `benchmarks/results/offload_dashboard.json` | config, compile info, per-placement and per-phase results, every 0.5 s sample |
 | `--target-fps` | 30 | pacing target for the AI pipeline |
 | `--clip` | `person`, else `street` | stock clip from `examples/common/clips.py`, or a path. Falls back to a synthetic scene |
-| `--no-rebaseline` | off | skip the closing AI-off phase |
 | `--snapshot-dir` | none | save one live frame from the NPU phase and the summary frame as PNG files |
 
 Press `q` or `Esc` in the window to stop early.
 
-## Phases
+## Design: why it measures it this way
 
-1. **AI off (start)**: foreground work only. This is the baseline.
-2. **AI on CPU**, 3. **AI on GPU**, 4. **AI on NPU**: the same pipeline, with both models compiled for that device.
-5. **AI off (end)**: a second baseline. Foreground "% retained" is measured against the **mean of both baselines**,
-   which absorbs slow drift from heat and turbo. `baseline.drift_pct` in the JSON shows how much the two baselines
-   differ.
+An earlier version kept 2 of the 6 threads free (4 foreground workers) and used a single baseline at the start and at
+the end. In that version, AI on the CPU simply ran on the idle threads. Foreground throughput did not drop: it read
+121 %, while system CPU went from 74 % to 99 %. Meanwhile the baseline itself drifted −20 % over the run as the chip
+heated up. So the throughput number neither showed the real cost nor stayed stable. The current design fixes both:
 
-All models are compiled on every device **before** the foreground load starts. If a device fails to compile, its
-phase is marked `compile failed / not available` and skipped. The demo **never** runs that phase on another device
-instead. The JSON records `EXECUTION_DEVICES` for every compiled model.
+1. **The foreground job uses every thread** (`--fg-workers` = logical CPUs). Any CPU time the AI uses now has to come
+   out of your work, as it would during a build, an export or a big recalculation. (Before the pre/post-processing was
+   optimised, this load starved even the NPU pipeline to about 20 FPS. With about 2–4 ms of CPU-side work per frame it
+   now holds 28–30 FPS.)
+2. **Every AI phase sits between two AI-off phases**: off, CPU, off, GPU, off, NPU, off, and so on. "Your work kept" is
+   the AI phase's foreground ops/s divided by the **mean of the AI-off phases just before and just after it**. This
+   cancels the slow thermal and power-limit drift.
+3. **Two rounds in alternating order**: CPU→GPU→NPU, then NPU→GPU→CPU. No placement always lands in the hottest part
+   of the run. The results are averaged per placement, and the static chart shows each round as a dot.
+4. **CPU time per AI frame is the primary metric.** It is the AI process's CPU seconds divided by the frames it
+   produced, including OpenVINO's runtime threads. It needs no baseline and barely depends on background noise. "Your
+   work kept" is the secondary metric: it is what the user feels, but it moves with everything else on the machine.
+
+If you'd rather see the cost as **free CPU** than as throughput, run with `--fg-workers 4`. With two threads idle,
+AI on the CPU then shows up as system CPU rising (74 % → 99 % in the earlier run), while foreground throughput stays
+flat.
 
 ## How to read the dashboard
 
-* **Left:** the processed video, with a badge for the current device. Below it are tiles for the last ~2 s:
-  foreground work as a % of baseline, AI FPS, system CPU, and UI lag. Under the tiles is a table that fills in as each
-  phase finishes.
+* **Header:** the run order. Pills show the AI placements and small squares show the AI-off phases.
+* **Left:** the processed video, with a badge for the current device. Below it are tiles for the last ~2 s: your
+  work (% of the most recent AI-off phase), AI FPS, system CPU, and UI lag. The table underneath shows each
+  placement, averaged over the rounds finished so far: AI FPS, your work kept, AI process CPU %, CPU ms per frame, and
+  how busy the accelerator is.
 * **Right:** line charts across the whole run, coloured by placement (grey = AI off, orange = CPU, green = GPU,
   blue = NPU):
-  1. foreground work as a % of baseline (dashed line = 100 %)
+  1. your work (dashed line = 100 %)
   2. CPU used by the AI process
-  3. AI FPS (dashed line = target)
+  3. AI FPS (dashed line = 30 FPS target)
   4. how busy the NPU and iGPU are (busiest engine)
-* **End:** bar charts of "foreground work retained" and "AI FPS" for each placement, plus a one-line takeaway per
-  placement.
+* **End card:** "foreground work kept", "AI FPS" and "CPU time per AI frame" for each placement, plus a one-line
+  takeaway for each.
 
 ## Methodology
 
@@ -69,67 +85,72 @@ instead. The JSON records `EXECUTION_DEVICES` for every compiled model.
   * Input normalisation (u8→f32, BGR→RGB, mean/scale) is built into both models with OpenVINO `PrePostProcessor`,
     so it runs on whichever device runs the model.
   * The CPU still resizes the inputs, blurs the background and blends it with the mask (`cv2.blendLinear`), runs NMS,
-    and draws the boxes. This happens in **every** placement and is reported as `prepost_ms`.
+    and draws the boxes. This happens in **every** placement and is reported as `prepost_ms` (wall time).
   * Frames are paced to `--target-fps`. If a frame runs late, the pipeline does not try to catch up. The clip is
-    decoded into memory up front, so decoding costs nothing in any phase.
-* **Foreground "user work"** (`workers.foreground_worker`): N processes, each repeatedly running
-  `zlib.compress(level 6)` on a fixed 384 KB buffer. Throughput is counted in ops/s from shared counters, a stand-in
-  for a build, a compression job or a spreadsheet recalculation. The default N leaves two of the six logical CPUs
-  free, so the OS, the dashboard and the AI pipeline's CPU work have room. Use `--fg-workers 6` to load every thread.
+    decoded into memory up front.
+  * All models are compiled on every device **before** the foreground load starts. A device that fails to compile is
+    reported as `compile failed / not available`, and its phases are skipped. Its work is **never** run on another
+    device instead. The JSON records `EXECUTION_DEVICES` for every compiled model.
+* **Foreground "user work"** (`workers.foreground_worker`): one process per logical CPU, each repeatedly running
+  `zlib.compress(level 6)` on a fixed 384 KB buffer. Throughput is counted in ops/s from shared counters.
 * **Responsiveness probe**: one process asks for 2 ms sleeps and records how late it wakes up. The p95 lateness per
-  0.5 s window is shown as "UI lag".
-* **Per-phase numbers** are means of 0.5 s samples, leaving out the first 2 s of each phase. Per-frame costs are
-  weighted by frame count. `ai_proc_cpu_ms_per_frame` is the AI process's CPU time divided by the number of frames.
-  It includes OpenVINO runtime threads, so in the CPU placement it includes the inference itself.
+  0.5 s window is shown as "UI lag". This number is noisy.
+* **Aggregation**: per phase, means of 0.5 s samples, leaving out the first 2 s; per-frame costs are weighted by frame
+  count. Per placement, the mean over its phases (`placements[*].result`). The per-round values are kept in
+  `placements[*].result.rounds`.
 
 ## Telemetry: what was and wasn't measurable
 
 | Metric | Source | Status on this laptop |
 |---|---|---|
 | System CPU % | `psutil.cpu_percent` | works |
-| Per-process CPU (AI / foreground / dashboard / everything else) | `psutil` `cpu_times` deltas | works. "Everything else" = system minus our processes |
-| NPU utilisation | PDH `\GPU Engine(*)\Utilization Percentage`, read through `ctypes` (~1 ms per sample) | **works**. The NPU (Intel AI Boost) appears as its own adapter LUID with a single `Compute` engine |
-| iGPU utilisation | same counter, the adapter that has `VideoDecode` engines | **works**. OpenVINO GPU work shows up on the iGPU engine type named `Neural` (busiest engine is reported) |
+| Per-process CPU (AI / foreground / dashboard / everything else) | `psutil` `cpu_times` deltas | works. "Everything else" = system minus our processes; it shows how much noise there was |
+| NPU utilisation | PDH `\GPU Engine(*)\Utilization Percentage`, read through `ctypes` (~1 ms per sample) | **works**. The NPU (Intel AI Boost) appears as its own adapter LUID with one engine. That engine is typed `Neural` with NPU driver 32.0.100.5540 and was typed `Compute` with the earlier 32.0.100.4724 driver. Both are recognised: the NPU is the adapter whose engines are all `Compute`/`Neural` and which has no 3D, video or copy engines |
+| iGPU utilisation | same counter, the adapter that has `VideoDecode` engines | **works**. OpenVINO GPU work shows up on the iGPU's `Neural` engine; the busiest engine is reported |
 | Utilisation from our AI process only | same counter, filtered by `pid_` in the instance name | works (`npu_util_ai_proc`, `gpu_util_ai_proc`) |
 | Power | WMI `root\wmi BatteryStatus.DischargeRate`, via one long-lived PowerShell loop | **only on battery**. On AC the value is 0, so the dashboard says "on AC - power not measured". No per-device power counter (CPU/GPU/NPU package power) was found that can be read without admin rights |
 
-Adapters are identified by their engine types when the demo starts, because LUIDs change between boots. The JSON
-records the LUID→engine-type map (`telemetry.accelerators`).
+LUIDs change between boots, so adapters are identified by their engine types, and re-checked on every sample until
+both are found. Counter instances only appear once a process has opened the adapter. The JSON records the
+LUID→engine-type map (`telemetry.accelerators`).
 
 ## Caveats
 
-* **6-thread CPU.** The Core Ultra 5 322 has 2 P-cores and 4 LP E-cores, with no SMT. Any CPU-side AI therefore takes
-  a big share of a small CPU. Bigger chips will show smaller foreground losses.
-* **Pre/post still runs on the CPU** with the NPU or GPU too: about 2 ms of resize, blend, NMS and drawing per frame
-  when the machine is idle, and more under load. Offloading removes the *inference* cost, not all CPU cost.
+* **6-thread CPU.** The Core Ultra 5 322 has 2 P-cores and 4 LP E-cores, with no SMT. CPU-side AI takes a big share of a
+  small CPU, and OpenVINO's CPU threads compete with your work for the two P-cores. Bigger chips will show smaller
+  losses.
+* **Shared power budget.** CPU, iGPU and NPU share one package power limit. When all CPU threads are busy, the iGPU
+  clocks down: AI on the GPU then reaches only about 19–22 FPS while the iGPU reads 80–85 % busy. Even with AI on the
+  NPU, your work can lose a few percent, from the ~2 % CPU the AI process uses plus shared power and memory bandwidth.
+  The NPU mostly frees **CPU time**. It does not make the AI completely free.
+* **Pre/post still runs on the CPU** with the NPU and GPU too: about 2 ms of resize, blend, NMS and drawing per frame
+  when the machine is idle, and 3–5 ms when every thread is busy.
 * **Accelerator % is not compute load.** The PDH engine counter shows how much of the time the engine had work
-  queued. A low NPU % at 30 FPS means the NPU sits mostly idle between frames; it is not a measure of TOPS used.
+  queued. NPU ≈ 6 % at 30 FPS means it is idle between frames; it is not a measure of TOPS used.
 * **AC vs. battery.** Turbo and power limits differ, and power is only reported on battery.
-* **Noise.** Anything else running on the machine (other apps, Defender scans, Windows Update) takes CPU share from
-  the foreground workers. Check `other_procs_cpu_pct` in each phase and the baseline drift, and run several times on
-  an otherwise idle machine for publishable numbers.
-* **Order effects.** Phases run in a fixed order: baseline, CPU, GPU, NPU, baseline. The NPU phase runs last, after
-  the CPU has warmed up the most, which works against the NPU.
+* **Noise.** Anything else running on the machine takes CPU from the foreground workers. Check
+  `other_procs_cpu_pct`, `baseline.spread_pct` and the per-round dots before quoting a number.
 
 ## Results on this laptop
 
-This run used the `person` clip, 8 s phases and 4 foreground workers, plugged into AC power. **The machine was not
-idle:** other demos (vision, depth, LLM) were running at the same time and used 24–49 % of the CPU
-(`other_procs_cpu_pct`). They also kept the iGPU 10–25 % busy in phases where our AI was not on the GPU. The two
-baselines differ by −12 %. Treat the foreground percentages as indicative only, and re-run on an idle machine.
+> The numbers below come from a **short development run**: `--phase-seconds 6` (4 s AI-off phases), 2 rounds,
+> 6 foreground workers, on AC, NPU driver 32.0.100.5540, graphics driver 32.0.101.9175. Other agents were building
+> charts at the same time and used 5–35 % of the CPU (`other_procs_cpu_pct`). The AI-off phases varied by 39 %
+> (`baseline.spread_pct`). The default 15 s / 10 s run on an idle machine (`scripts/record_all.ps1`) regenerates the
+> GIF, PNG and JSON; refresh this table from `placements` in that JSON.
 
-| Placement | AI FPS (target 30) | Foreground work retained | AI process CPU (% of system) | CPU ms per AI frame (pre/post) | Inference ms (wall) | Accelerator busy | UI lag p95 |
-|---|---|---|---|---|---|---|---|
-| AI off (start) | – | 106 % | 0 % | – | – | – | 3.3 ms |
-| **AI on CPU** | **13.3** | **69 %** | 9.8 % | 44.0 (5.7) | 68.6 | – | 20.2 ms |
-| AI on GPU | 29.0 | 97 % | 5.3 % | 11.1 (3.0) | 12.6 | iGPU 33 % | 3.7 ms |
-| **AI on NPU** | **30.0** | **103 %** | 3.5 % | 7.0 (3.1) | 4.3 | NPU 7 % | 2.7 ms |
-| AI off (end) | – | 94 % | 0 % | – | – | – | 5.2 ms |
+| Placement | AI FPS (target 30) | Your work kept (round 1 / 2) | AI process CPU (% of system) | CPU ms per AI frame | pre/post ms | Accelerator busy |
+|---|---|---|---|---|---|---|
+| **AI on CPU** | **12.7** | **80 %** (77 / 82) | 10.7 % | **50.2** | 5.1 | – |
+| AI on GPU | 19.2 | 81 % (77 / 86) | 2.6 % | 8.2 | 4.3 | iGPU 82 % |
+| **AI on NPU** | **28.3** | **94 %** (93 / 95) | 1.9 % | **4.0** | 4.4 | NPU 6 % |
 
 **Takeaways**
 
-* **CPU:** on a loaded 6-thread CPU, the CPU placement cannot reach 30 FPS. It cuts the foreground work by about a
-  third and makes the UI wake-ups about 6× later.
-* **GPU:** holds about 29 FPS, but still costs some foreground throughput.
-* **NPU:** holds 30 FPS while the foreground work stays within noise of baseline. The AI process costs about 7 ms of
-  CPU per frame, almost all of it the CPU-side pre/post-processing, and the NPU is busy only about 7 % of the time.
+* **CPU:** with every thread busy, AI on the CPU reaches only about 13 of the 30 FPS. It costs about 50 ms of CPU per
+  frame, and your work loses about a fifth of its throughput.
+* **GPU:** CPU cost per frame is low (about 8 ms), but because the iGPU shares the power budget with a fully loaded
+  CPU it only manages about 19 FPS.
+* **NPU:** holds about 28–30 FPS for about 4 ms of CPU per frame, roughly **12× less CPU than AI on the CPU**. Your
+  work keeps about 94 %. That remaining cost is CPU-side pre/post-processing plus shared power and memory, not
+  inference.

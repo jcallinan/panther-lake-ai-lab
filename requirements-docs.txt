@@ -1,0 +1,3 @@
+# Extra dependencies for regenerating charts, slide decks and the GitHub Pages site (not needed to run the examples).
+python-pptx==1.0.2
+matplotlib>=3.9

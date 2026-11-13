@@ -2,9 +2,12 @@
 
 The same continuous AI workload (selfie-segmentation background blur + YOLOX-tiny object detection on a video stream,
 paced to a target 30 FPS) is placed on CPU, GPU and NPU in turn while a fixed CPU-bound "user work" job (one zlib
-compression worker per logical CPU) runs in the foreground. Phases run sequentially:
+compression worker per logical CPU) runs in the foreground. Every AI phase is bracketed by AI-off phases, and the
+placements run in 2 rounds with alternating order (drift-robust):
 
-    baseline (foreground only, AI off) -> AI on CPU -> AI on GPU -> AI on NPU
+    off, CPU, off, GPU, off, NPU, off, NPU, off, GPU, off, CPU, off      (~3 min with defaults)
+
+Primary metric: CPU ms per AI frame. Secondary: foreground ops/s vs. the adjacent AI-off phases, and AI FPS.
 
 Run:   .venv\\Scripts\\python.exe -m examples.offload_dashboard
        .venv\\Scripts\\python.exe -m examples.offload_dashboard --no-display --record --phase-seconds 15
